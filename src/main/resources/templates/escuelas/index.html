@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Escuelas</title>
+    <style>
+        .navbar-dark .nav-link {
+            color: #fff;
+            /* texto blanco */
+            position: relative;
+        }
+
+        .navbar-dark .nav-link::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 2px;
+            background: red;
+            transition: width 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .navbar-dark .nav-link {
+            color: red !important;
+            position: relative;
+        }
+
+        .navbar-dark .nav-link::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 2px;
+            background: red;
+            transition: width 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .navbar-dark .nav-link:hover::after,
+        .navbar-dark .nav-link.active::after {
+            width: 100%;
+            /* se ilumina todo el borde inferior */
+        }
+        .btn-add{
+            color: red;
+            border-color: red;
+            background-color: transparent;
+        }
+        .btn-add:hover{
+            color: black;
+            background-color: red;
+            border-color: red;
+        }
+        .table-dark tr th,
+        .table-dark tr td{
+            color: red;
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm border-bottom border-danger">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1 text-danger">Gestion Escolar</a>
+
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/alumnos}">Alumnos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/escuelas}">Escuelas</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-danger">Listado de Escuelas</h2>
+        <a th:href="@{/escuelas/nuevo}" class="btn btn-add mb-3">Registrar Nueva Escuela</a>
+        <table class="table table-striped border border-danger">
+            <thead class="table-dark">
+                <tr>
+                    <th class="border border-danger">ID</th>
+                    <th class="border border-danger">Nombre</th>
+                </tr>
+            </thead>
+            <tbody class="table-dark">
+                <tr th:if="${#lists.isEmpty(escuelas)}">
+                    <td colspan="4" class="text-center py-4 text-danger">
+                        <i class="bi bi-inbox fs-2 d-block mb-2 text-danger"></i>
+                        No hay escuelas registradas.
+                    </td>
+                </tr>
+                <tr th:each="esc : ${escuelas}">
+                    <td class="border border-danger" th:text="${esc.id}"></td>
+                    <td class="border border-danger" th:text="${esc.nombre}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

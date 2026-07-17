@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Alumnos</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .navbar-dark .nav-link {
+            color: #fff;
+            /* texto blanco */
+            position: relative;
+        }
+
+        .navbar-dark .nav-link::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 2px;
+            background: red;
+            transition: width 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .navbar-dark .nav-link {
+            color: red !important;
+            position: relative;
+        }
+
+        .navbar-dark .nav-link::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 2px;
+            background: red;
+            transition: width 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .navbar-dark .nav-link:hover::after,
+        .navbar-dark .nav-link.active::after {
+            width: 100%;
+            /* se ilumina todo el borde inferior */
+        }
+
+        .btn-add {
+            color: red;
+            border-color: red;
+            background-color: transparent;
+        }
+
+        .btn-add:hover {
+            color: black;
+            background-color: red;
+            border-color: red;
+        }
+
+        .table-dark tr th,
+        .table-dark tr td {
+            color: red;
+        }
+        .icono-rojo{
+            border-color: red !important;
+            color: red !important;
+        }
+        .confirm-custom{
+            color: red;
+            border-color: red;
+            background-color: transparent;
+        }
+        .confirm-custom:hover{
+            color: black;
+            background-color: red;
+            border-color: red;
+        }
+        .cancel-custom{
+            color: #ffc107;
+            border-color: #ffc107;
+            background-color: transparent;
+        }
+        .cancel-custom:hover{
+            color: black;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-dark">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm border-bottom border-danger">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1 text-danger">Gestion Escolar</a>
+
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="this">Alumnos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/escuelas}">Escuelas</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-0 text-danger">Directorio de Alumnos</h2>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a th:href="@{/alumnos/nuevo}" class="btn btn-add shadow-sm">
+                    <i class="bi bi-person-plus-fill me-1"></i> Agregar Alumno
+                </a>
+            </div>
+        </div>
+
+        <div class="card shadow border-0 rounded-3">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0 border border-danger rounded-2">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="ps-4 border border-danger">ID</th>
+                                <th class="border border-danger">Nombre Completo</th>
+                                <th class="border border-danger">Escuela Asignada</th>
+                                <th class="text-center border border-danger">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-dark">
+                            <tr th:if="${#lists.isEmpty(alumnos)}">
+                                <td colspan="4" class="text-center py-4 text-danger">
+                                    <i class="bi bi-inbox fs-2 d-block mb-2 text-danger"></i>
+                                    No hay alumnos registrados.
+                                </td>
+                            </tr>
+                            <tr th:each="alumno : ${alumnos}">
+                                <td class="ps-4 align-middle border border-danger" th:text="${alumno.id}">1</td>
+                                <td class="align-middle fw-medium border border-danger" th:text="${alumno.nombre}">
+                                    Nombre Apellido</td>
+                                <!-- Verifica si existe la escuela para evitar NullPointerException -->
+                                <td class="align-middle border border-danger">
+                                    <span class="badge text-danger px-3 py-2 rounded-pill"
+                                        th:text="${alumno.escuela != null ? alumno.escuela.nombre : 'No asignada'}">Escuela</span>
+                                </td>
+                                <td class="text-center align-middle border border-danger">
+                                    <a th:href="@{/alumnos/editar/{id}(id=${alumno.id})}"
+                                        class="btn btn-sm btn-outline-danger me-1">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </a>
+                                    <a th:href="@{/alumnos/eliminar/{id}(id=${alumno.id})}"
+                                        class="btn btn-sm btn-outline-warning btn-eliminar">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Selecciona todos los botones con clase .btn-eliminar
+        document.querySelectorAll('.btn-eliminar').forEach(boton => {
+            boton.addEventListener('click', function (event) {
+                event.preventDefault(); // evita que se ejecute el link inmediatamente
+
+                const url = this.getAttribute('href'); // obtiene la URL del enlace
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción eliminará al alumno de forma permanente",
+                    icon: 'warning',
+                    background: '#212529',
+                    color: '#ff0000',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        icon: 'icono-rojo',
+                        confirmButton: 'confirm-custom',
+                        cancelButton: 'cancel-custom'
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

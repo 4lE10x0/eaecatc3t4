@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Alumno</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .form-control::placeholder {
+            color: red;
+            opacity: 1;
+        }
+        .form-control:focus{
+            border-color: red;
+            background-color: transparent;
+        }
+        .btn-cancel{
+            color: #ffc107;
+            border-color: #ffc107;
+            background-color: transparent;
+        }
+        .btn-cancel:hover{
+            color: black;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-save{
+            color: red;
+            border-color: red;
+            background-color: transparent;
+        }
+        .btn-save:hover{
+            color: black;
+            background-color: red;
+            border-color: red;
+        }
+        .btn-save:disabled{
+            color: red;
+            border-color: red;
+            background-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+
+    <nav class="navbar navbar-danger bg-danger mb-5 shadow-sm">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1"><i class="bi bi-mortarboard-fill me-2"></i>Gestión Escolar</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card shadow bg-dark border border-danger rounded-2">
+                    <div class="card-header bg-dark border-bottom-0 pt-4 pb-0 px-4">
+                        <h3 class="card-title text-danger mb-0"
+                            th:text="${alumno.id == null ? 'Registrar Nuevo Alumno' : 'Modificar Datos de Alumno'}">
+                            Formulario
+                        </h3>
+                        <p class="text-light mt-2">Completa los datos requeridos a continuación.</p>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <!-- El formulario se enlaza al objeto 'alumno' enviado desde el controlador -->
+                        <form th:action="@{/alumnos/guardar}" th:object="${alumno}" method="post">
+
+                            <!-- ID Oculto, crucial para que Spring sepa que es una actualización (PUT/UPDATE) y no un INSERT nuevo -->
+                            <input type="hidden" th:field="*{id}">
+
+                            <div class="mb-4">
+                                <label for="nombre" class="form-label fw-bold text-danger">Nombre Completo <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border border-danger"><i
+                                            class="bi bi-person text-danger"></i></span>
+                                    <input type="text" id="nombre" th:field="*{nombre}" class="form-control bg-dark text-light border border-danger" required
+                                        placeholder="Ej. Juan López García">
+                                </div>
+                            </div>
+
+                            <div class="mb-5">
+                                <label for="escuela" class="form-label fw-bold text-danger">Escuela de Procedencia <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border border-danger"><i
+                                            class="bi bi-building text-danger"></i></span>
+                                    <select id="escuela" th:field="*{escuela}" class="form-select bg-dark text-light border border-danger" required>
+                                        <option class="text-danger" value="" disabled selected>-- Seleccione una institución --</option>
+                                        <!-- Iteramos las escuelas enviadas desde el controlador para poblar el dropdown -->
+                                        <option class="text-danger" th:each="esc : ${escuelas}" th:value="${esc.id}"
+                                            th:text="${esc.nombre}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- Mensaje en caso de que no haya escuelas creadas en la BD -->
+                                <div th:if="${#lists.isEmpty(escuelas)}" class="form-text text-warning mt-2">
+                                    <i class="bi bi-exclamation-triangle"></i> Debes registrar al menos una Escuela en
+                                    la base de datos antes de guardar un alumno.
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 pt-4">
+                                <a th:href="@{/alumnos}" class="btn border-warning btn-cancel px-4">Cancelar</a>
+                                <button type="submit" class="btn btn-save px-4 shadow-sm"
+                                    th:disabled="${#lists.isEmpty(escuelas)}">
+                                    <i class="bi bi-save me-1"></i> Guardar Registro
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
