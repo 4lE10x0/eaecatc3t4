@@ -9,7 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/alumnos")
+@RequestMapping("/")
 public class AlumnoController {
 
     @Autowired
